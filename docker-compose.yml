@@ -1,0 +1,52 @@
+version:  "3"
+
+services:
+
+  apigateway:
+    build: services/apigateway
+    ports:
+      - "8080:8080"
+    environment:
+      - TZ=Europe/Moscow
+    restart: always
+    volumes:
+      - ./configs/apigateway.properties:/apigateway/target/application.properties:ro
+      - ./configs/APIGateway.yml:/apigateway/target/application.yml:ro
+
+
+
+  payment-service:
+    build: services/payment-service
+    ports:
+      - "8081:8080"
+    restart: always
+    environment:
+      - TZ=Europe/Moscow
+      - JAVA_TOOL_OPTIONS=-agentlib:jdwp=transport=dt_socket,address=*:5001,server=y,suspend=n
+#    on this stage I will use mount files directly in  containers
+    volumes:
+      - ./configs/payment.properties:/payment/target/application.properties:ro
+
+  trip-service:
+    build: services/trip-service
+    ports:
+      - "8082:8080"
+    restart: always
+    environment:
+      - TZ=Europe/Moscow
+      - JAVA_TOOL_OPTIONS=-agentlib:jdwp=transport=dt_socket,address=*:5002,server=y,suspend=n
+    #    on this stage I will use mount files directly in  containers
+    volumes:
+      - ./configs/trip.properties:/trip/target/application.properties:ro
+
+  user-service:
+    build: services/user-service
+    ports:
+      - "8083:8080"
+    restart: always
+    environment:
+      - TZ=Europe/Moscow
+      - JAVA_TOOL_OPTIONS=-agentlib:jdwp=transport=dt_socket,address=*:5003,server=y,suspend=n
+    #    on this stage I will use mount files directly in  containers
+    volumes:
+      - ./configs/user.properties:/user/target/application.properties:ro
